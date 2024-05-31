@@ -1,49 +1,10 @@
 import CliTable from "https://esm.sh/cli-table3";
-
+import { Graph } from "./class_graph.ts"
 interface GraphResults {
     distances: Map<number, number>;
     predecessors: Map<number, number | null>;
 }
 
-class Graph {
-    private adjacencyList: Map<number, Map<number, number>> = new Map();
-
-    addVertex(vertex: number): void {
-        if (!this.adjacencyList.has(vertex)) {
-            this.adjacencyList.set(vertex, new Map());
-        }
-    }
-
-    addEdge(source: number, destination: number, weight: number): void {
-        this.addVertex(source);
-        this.addVertex(destination);
-        if (!this.adjacencyList.get(source)!.has(destination)) {
-            this.adjacencyList.get(source)!.set(destination, weight);
-        }
-    }
-
-    getVertexCount(): number {
-        return this.adjacencyList.size;
-    }
-
-    getVertices(): number[] {
-        return Array.from(this.adjacencyList.keys()).sort((a, b) => a - b);
-    }
-
-    getNeighbors(vertex: number): Map<number, number> {
-        return this.adjacencyList.get(vertex) || new Map();
-    }
-
-    getEdgeCount(): number {
-        let count = 0;
-        this.adjacencyList.forEach((edges) => count += edges.size);
-        return count;
-    }
-
-    public getAdjacencyList(): Map<number, Map<number, number>> {
-        return this.adjacencyList;
-    }
-}
 
 async function loadGraphFromFile(filePath: string): Promise<Graph> {
     const graph = new Graph();
