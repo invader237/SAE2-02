@@ -1,5 +1,10 @@
 import CliTable from "https://esm.sh/cli-table3";
 
+interface GraphResults {
+    distances: Map<number, number>;
+    predecessors: Map<number, number | null>;
+}
+
 class Graph {
     private adjacencyList: Map<number, Map<number, number>> = new Map();
 
@@ -19,6 +24,10 @@ class Graph {
 
     getVertexCount(): number {
         return this.adjacencyList.size;
+    }
+
+    getVertices(): number[] {
+        return Array.from(this.adjacencyList.keys()).sort((a, b) => a - b);
     }
 
     getNeighbors(vertex: number): Map<number, number> {
@@ -55,10 +64,11 @@ async function loadGraphFromFile(filePath: string): Promise<Graph> {
     return graph;
 }
 
-function dijkstra(graph: Graph, startVertex: number): { distances: Map<number, number>, predecessors: Map<number, number> } {
+function dijkstra(graph: Graph, startVertex: number): GraphResults {
     const distances = new Map<number, number>();
     const predecessors = new Map<number, number>();
     const priorityQueue = new Set<number>();
+
     //recupération des sommets pour créer le tableau
     const vertices = graph.getVertices();
     //création du tableau avec le nom des sommets
@@ -74,24 +84,20 @@ function dijkstra(graph: Graph, startVertex: number): { distances: Map<number, n
         distances.set(vertex, Infinity);
         priorityQueue.add(vertex);
     });
-
     // Définir la distance au sommet de départ à 0 et s'assurer qu'elle est mise à jour dans la file
     distances.set(startVertex, 0);
-    priorityQueue.add(startVertex); // Ajouter à nouveau pour s'assurer que la mise à jour prend effet
 
     while (priorityQueue.size !== 0) {
         const currentVertex = getVertexWithMinDistance(distances, priorityQueue);
 
-        //let tabelLine: Array<string> = currentVertex.toString();
-
-        if (currentVertex === -1) break; // Sortir de la boucle si aucun sommet valide n'est trouvé
+        if (currentVertex === -1) break;
 
         priorityQueue.delete(currentVertex);
+        const currentDistance = distances.get(currentVertex) ?? Infinity;
         const neighbors = graph.getNeighbors(currentVertex);
         neighbors.forEach((weight, neighbor) => {
-            const alt = distances.get(currentVertex)! + weight;
-            if (alt < (distances.get(neighbor) || Infinity)) {
-                console.log(`Updating distance of vertex ${neighbor} from ${distances.get(neighbor)} to ${alt}`);
+            const alt = currentDistance + weight;
+            if (alt < (distances.get(neighbor) ?? Infinity)) {
                 distances.set(neighbor, alt);
                 predecessors.set(neighbor, currentVertex);
             }
@@ -99,7 +105,6 @@ function dijkstra(graph: Graph, startVertex: number): { distances: Map<number, n
         table.push(newTableLine(distances, currentVertex, vertices));
         console.log(table.toString());
     }
-
     return { distances, predecessors };
 }
 
