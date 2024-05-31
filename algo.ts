@@ -1,3 +1,5 @@
+import CliTable from "https://esm.sh/cli-table3";
+
 class Graph {
     private adjacencyList: Map<number, Map<number, number>> = new Map();
 
@@ -15,8 +17,18 @@ class Graph {
         }
     }
 
+    getVertexCount(): number {
+        return this.adjacencyList.size;
+    }
+
     getNeighbors(vertex: number): Map<number, number> {
         return this.adjacencyList.get(vertex) || new Map();
+    }
+
+    getEdgeCount(): number {
+        let count = 0;
+        this.adjacencyList.forEach((edges) => count += edges.size);
+        return count;
     }
 
     public getAdjacencyList(): Map<number, Map<number, number>> {
@@ -55,6 +67,15 @@ function dijkstra(graph: Graph, startVertex: number): { distances: Map<number, n
     const distances = new Map<number, number>();
     const predecessors = new Map<number, number>();
     const priorityQueue = new Set<number>();
+    //recupération des sommets pour créer le tableau
+    const vertices = graph.getVertices();
+    //création du tableau avec le nom des sommets
+    const table = new CliTable({
+      head: ["E"].concat(vertices.map(v => " " + v.toString() + " ")).concat(["B"]),
+    });
+    //Initialisation de la première ligne du tableau
+    table.push(["∅"].concat(vertices.map(v => "∞")).concat(startVertex.toString()));
+    console.log(table.toString());
 
     // Initialisation des distances et ajout des sommets à la file de priorité
     graph.getAdjacencyList().forEach((_, vertex) => {
@@ -68,10 +89,12 @@ function dijkstra(graph: Graph, startVertex: number): { distances: Map<number, n
 
     while (priorityQueue.size !== 0) {
         const currentVertex = getVertexWithMinDistance(distances, priorityQueue);
+
+        //let tabelLine: Array<string> = currentVertex.toString();
+
         if (currentVertex === -1) break; // Sortir de la boucle si aucun sommet valide n'est trouvé
 
         priorityQueue.delete(currentVertex);
-
         const neighbors = graph.getNeighbors(currentVertex);
         neighbors.forEach((weight, neighbor) => {
             const alt = distances.get(currentVertex)! + weight;
@@ -81,9 +104,24 @@ function dijkstra(graph: Graph, startVertex: number): { distances: Map<number, n
                 predecessors.set(neighbor, currentVertex);
             }
         });
+        table.push(newTableLine(distances, currentVertex, vertices));
+        console.log(table.toString());
     }
 
     return { distances, predecessors };
+}
+
+function newTableLine(distancesMap: Map<number, number>, currentVertex: number, vertices: number[]): Array<string> {
+
+    const distancesMapSorted = new Map([...distancesMap.entries()].sort((a, b) => a[0] - b[0]));
+
+    let tableLine: Array<string> = [currentVertex.toString()];
+    vertices.forEach(vertex => {
+        const distance = distancesMapSorted.get(vertex);
+        const distanceString = distance !== undefined && distance !== Infinity ? distance.toString() : '∞';
+        tableLine.push(distanceString);
+    });
+    return tableLine;
 }
 
 function getVertexWithMinDistance(distances: Map<number, number>, priorityQueue: Set<number>): number {
@@ -124,3 +162,9 @@ for (const file of files) {
         console.error(`Error processing file ${file}: ${error}`);
     });
 }
+
+
+
+/*
+table.push('test', 'test2', 'test3');
+console.log(table.toString());*/
