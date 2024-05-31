@@ -39,24 +39,16 @@ class Graph {
 async function loadGraphFromFile(filePath: string): Promise<Graph> {
     const graph = new Graph();
     const fileContent = await Deno.readTextFile(filePath);
-    const lines = fileContent.split('\n');
+    const lines = fileContent.trim().split('\n').slice(1);
 
-    lines.forEach((line, index) => {
-        if (index === 0) return; // Ignore la première ligne
-        if (line.trim() === "") return;
-        const parts = line.split(' ');
+    lines.forEach(line => {
+        const parts = line.split(' ').map(Number);
         if (parts.length === 3) {
-            const source = parseInt(parts[0]);
-            const destination = parseInt(parts[1]);
-            const weight = parseInt(parts[2]);
-            if (!isNaN(source) && !isNaN(destination) && !isNaN(weight)) {
-                graph.addEdge(source, destination, weight);
-                console.log(`Edge added from ${source} to ${destination} with weight ${weight}`);
-            } else {
-                console.log(`Failed to add edge from ${parts[0]} to ${parts[1]} with weight ${parts[2]}`);
-            }
+            const [source, destination, weight] = parts;
+            graph.addEdge(source, destination, weight);
+            console.log(`Added edge from ${source} to ${destination} with weight ${weight}`);
         } else {
-            console.log(`Malformatted line ${index + 1}: '${line}'`);
+            console.log(`Malformatted line: '${line}'`);
         }
     });
 
