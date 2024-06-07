@@ -1,0 +1,41 @@
+function dijkstra(graph: Graph, startVertex: number): GraphResults {
+    const distances = new Map<number, number>();
+    const predecessors = new Map<number, number | null>();
+    const priorityQueue = new Set<number>();
+
+    // Initialiser toutes les distances à l'infini, sauf pour le sommet de départ
+    graph.getAdjacencyList().forEach((_, vertex) => {
+        distances.set(vertex, Infinity);
+        predecessors.set(vertex, null);
+        priorityQueue.add(vertex);
+    });
+    distances.set(startVertex, 0);
+
+    while (priorityQueue.size > 0) {
+        const currentVertex = getVertexWithMinDistance(distances, priorityQueue);
+
+        // Si le sommet avec la distance minimale a une distance infinie, tous les sommets restants sont inatteignables.
+        if (currentVertex === -1 || distances.get(currentVertex) === Infinity) {
+            break;  // Aucun chemin restant possible
+        }
+
+        priorityQueue.delete(currentVertex);
+        const currentDistance = distances.get(currentVertex) ?? Infinity;
+
+        // Mettre à jour les distances pour chaque voisin
+        graph.getNeighbors(currentVertex).forEach((weight, neighbor) => {
+            if (priorityQueue.has(neighbor)) {  // Considérer uniquement les sommets encore dans la queue
+                const alt = currentDistance + weight;
+                if (alt < (distances.get(neighbor) ?? Infinity)) {
+                    distances.set(neighbor, alt);
+                    predecessors.set(neighbor, currentVertex);
+                    // Ceci n'est pas nécessaire pour une simple queue, mais serait nécessaire pour une priority queue implémentée correctement
+                }
+            }
+        });
+    }
+
+    return { distances, predecessors };
+}
+
+export { dijkstra };
