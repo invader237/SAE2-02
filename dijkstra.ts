@@ -38,4 +38,20 @@ function dijkstra(graph: Graph, startVertex: number): GraphResults {
     return { distances, predecessors };
 }
 
+function getVertexWithMinDistance(distances: Map<number, number>, priorityQueue: Set<number>): number {
+    let minDistance = Infinity;
+    let vertexWithMinDistance = -1;
+
+    priorityQueue.forEach(vertex => {
+        const distance = distances.get(vertex) ?? Infinity;
+        if (distance < minDistance) {
+            minDistance = distance;
+            vertexWithMinDistance = vertex;
+        }
+    });
+
+    return vertexWithMinDistance;
+}
+
+export{ getVertexWithMinDistance };
 export { dijkstra };
