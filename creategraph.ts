@@ -1,4 +1,4 @@
-import { promptForInteger, proposeToSaveGraph } from "./menu";
+import { promptForInteger, proposeToSaveGraph } from "./menu.ts";
 
 async function createAdjacencyListGraph(graph: Graph): Promise<void> {
     console.log("\x1b[33mDébut de la création du graphe par liste d'adjacence.\x1b[0m");

@@ -1,4 +1,5 @@
-import { Graph } from './class_graph';
+import { Graph } from './class_graph.ts';
+import { GraphResults } from './algo.ts';
 
 function dijkstra(graph: Graph, startVertex: number): GraphResults {
     const distances = new Map<number, number>();

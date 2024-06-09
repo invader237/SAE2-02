@@ -1,9 +1,9 @@
-import { Graph } from "./class_graph";
-import {displayResults} from "./algo";
-import {dijkstra, calculateIsochrone} from "./dijkstra";
-import {loadGraphFromFile} from "./fileManagement";
-import {addArcOption, removeArcOption, testArcExistence, getSuccessors, getPredecessors, getNeighbors, getArcWeight} from "./algo";
-import { createAdjacencyListGraph, createAdjacencyMatrixGraph } from "./creategraph";
+import { Graph } from "./class_graph.ts";
+import {displayResults} from "./algo.ts";
+import {dijkstra, calculateIsochrone} from "./dijkstra.ts";
+import {loadGraphFromFile} from "./fileManagement.ts";
+import {addArcOption, removeArcOption, testArcExistence, getSuccessors, getPredecessors, getNeighbors, getArcWeight} from "./algo.ts";
+import { createAdjacencyListGraph, createAdjacencyMatrixGraph } from "./creategraph.ts";
 
 async function graphOptions(graph: Graph): Promise<void> {
     const running = true;

@@ -1,4 +1,4 @@
-import { Graph } from "./class_graph"
+import { Graph } from "./class_graph.ts"
 
 interface GraphResults {
     distances: Map<number, number>;
@@ -187,3 +187,4 @@ function displayResults(
 }
 
 export { displayResults, getSuccessors, getNeighbors, getPredecessors, testArcExistence, getArcWeight, addArcOption, removeArcOption};
+export type { GraphResults };
