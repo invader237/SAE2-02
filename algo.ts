@@ -226,29 +226,6 @@ async function createAdjacencyMatrixGraph(graph: Graph): Promise<void> {
     }
 }
 
-async function saveGraphToFile(graph: Graph, filePath: string): Promise<void> {
-    let data = '';
-    let edgeCount = 0;
-    const sortedVertices = Array.from(graph.getAdjacencyList().keys()).sort((a, b) => a - b);
-    sortedVertices.forEach(source => {
-        const edges = graph.getAdjacencyList().get(source);
-        if (edges) {
-            edges.forEach((weight, destination) => {
-                data += `${source} ${destination} ${weight}\n`;
-                edgeCount++;
-            });
-        }
-    });
-    const header = `${graph.getVertexCount()} ${edgeCount}\n`;
-    data = header + data;
-    try {
-        await Deno.writeTextFile(filePath, data);
-        console.log("Graphe sauvegardé au format liste d'adjacence avec succès.");
-    } catch (error) {
-        console.error("Erreur lors de la sauvegarde du graphe:", error);
-    }
-}
-
 function displayResults(
     distances: Map<number, number>,
     predecessors: Map<number, number | null>,
