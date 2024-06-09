@@ -60,5 +60,14 @@ function getVertexWithMinDistance(distances: Map<number, number>, priorityQueue:
     return vertexWithMinDistance;
 }
 
-export{ getVertexWithMinDistance };
-export { dijkstra };
+function calculateIsochrone(graphResults: GraphResults, maxDistance: number): Set<number> {
+    const reachableVertices = new Set<number>();
+    for (const [vertex, distance] of graphResults.distances) {
+        if (distance <= maxDistance) {
+            reachableVertices.add(vertex);
+        }
+    }
+    return reachableVertices;
+}
+
+export{ calculateIsochrone, dijkstra};
