@@ -273,16 +273,6 @@ async function createAdjacencyMatrixGraph(graph: Graph): Promise<void> {
         });
     }
 }
-async function promptForInteger(message: string, allowNegative = false): Promise<number> {
-    let input = await prompt(message);
-    let value = parseInt(input);
-    while (isNaN(value) || (!allowNegative && value < 0)) {
-        console.log(`Entrée invalide. ${allowNegative ? '' : 'Veuillez entrer un entier non négatif.'}`);
-        input = await prompt(message);
-        value = parseInt(input);
-    }
-    return value;
-}
 
 async function saveGraphToFile(graph: Graph, filePath: string): Promise<void> {
     let data = '';
