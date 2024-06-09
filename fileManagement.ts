@@ -1,4 +1,4 @@
-import { Graph } from "./class_graph.ts";
+import { Graph } from "./class_graph";
 
 async function loadGraphFromFile(filePath: string): Promise<Graph> {
     const graph = new Graph();
