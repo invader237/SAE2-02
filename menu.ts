@@ -109,7 +109,20 @@ async function graphOptions(graph: Graph): Promise<void> {
         await prompt("\x1b[34mAppuyez sur 'Entrée' pour continuer...\x1b[0m");
     }
 }
-
+async function promptForInteger(message: string, allowNegative = false): Promise<number> {
+    let input, value;
+    do {
+        input = await prompt(`${message}`);
+        value = parseInt(input);
+        if (isNaN(value) || (!allowNegative && value < 0)) {
+            console.log("\x1b[31mVeuillez entrer un entier valide.\x1b[0m");
+        }
+    } while (isNaN(value) || (!allowNegative && value < 0));
+    return value;
+    }
+if (import.meta.main) {
+    await mainMenu();
+}
 
 // Fonction pour demander à l'utilisateur d'entrer des données
 async function prompt(message: string): Promise<string> {
