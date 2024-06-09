@@ -1,10 +1,5 @@
 import { Graph } from './class_graph';
 
-interface GraphResults {
-    distances: Map<number, number>;
-    predecessors: Map<number, number | null>;
-}
-
 function dijkstra(graph: Graph, startVertex: number): GraphResults {
     const distances = new Map<number, number>();
     const predecessors = new Map<number, number | null>();
