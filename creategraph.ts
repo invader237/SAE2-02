@@ -1,3 +1,5 @@
+import { promptForInteger, proposeToSaveGraph } from "./menu";
+
 async function createAdjacencyListGraph(graph: Graph): Promise<void> {
     console.log("\x1b[33mDébut de la création du graphe par liste d'adjacence.\x1b[0m");
     let continueAdding = true;
@@ -67,3 +69,6 @@ async function createAdjacencyMatrixGraph(graph: Graph): Promise<void> {
 
     await proposeToSaveGraph(graph);
 }
+
+export { createAdjacencyListGraph, createAdjacencyMatrixGraph };
+

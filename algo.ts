@@ -1,10 +1,9 @@
-import { Graph } from "./class_graph:coffin:"
-import { proposeToSaveGraph } from "./menu";
+import { Graph } from "./class_graph"
+import { proposeToSaveGraph, graphOptions, mainMenu} from "./menu";
 
-// Interface définissant les résultats d'un algorithme de graphes, notamment Dijkstra
 interface GraphResults {
-    distances: Map<number, number>;  // Carte des distances minimales depuis le sommet de départ
-    predecessors: Map<number, number | null>;  // Carte des prédécesseurs sur le chemin le plus court
+    distances: Map<number, number>;
+    predecessors: Map<number, number | null>;
 }
 
 async function getSuccessors(graph: Graph): Promise<void> {
@@ -24,7 +23,6 @@ async function getSuccessors(graph: Graph): Promise<void> {
         console.log(`Aucun successeur trouvé pour le sommet ${vertex}.`);
     }
 }
-
 async function getNeighbors(graph: Graph): Promise<void> {
     const vertex = parseInt(await prompt("Entrez le numéro du sommet pour obtenir ses voisins :"));
     if (isNaN(vertex)) {
@@ -42,7 +40,6 @@ async function getNeighbors(graph: Graph): Promise<void> {
         console.log(`Aucun voisin trouvé pour le sommet ${vertex}.`);
     }
 }
-
 async function getPredecessors(graph: Graph): Promise<void> {
     const vertex = parseInt(await prompt("Entrez le numéro du sommet pour obtenir ses prédécesseurs :"));
     if (isNaN(vertex)) {
@@ -166,6 +163,57 @@ async function removeArcOption(graph: Graph): Promise<void> {
     }
 }
 
+async function createGraphMenu(): Promise<void> {
+    console.log("Choisissez le type de graphe à créer:");
+    console.log("1. Liste d'adjacence");
+    console.log("2. Matrice d'adjacence");
+    let typeChoice = await prompt("Entrez votre choix (1 ou 2):");
+
+    while (!['1', '2'].includes(typeChoice)) {
+        console.log("Entrée invalide. Veuillez choisir 1 pour une liste d'adjacence ou 2 pour une matrice d'adjacence.");
+        typeChoice = await prompt("Entrez votre choix (1 ou 2):");
+    }
+
+    const graph = new Graph();
+    if (typeChoice === '1') {
+        await createAdjacencyListGraph(graph);
+    } else {
+        await createAdjacencyMatrixGraph(graph);
+    }
+
+    // Demandez à l'utilisateur s'il souhaite sauvegarder le graphe
+    const save = await prompt("Voulez-vous sauvegarder le graphe? (oui/non)");
+    if (save.toLowerCase() === 'oui') {
+        const filePath = await prompt("Veuillez entrer le chemin complet pour enregistrer le fichier:");
+        await saveGraphToFile(graph, filePath);
+    } else {
+        await afterCreationOptions(graph);
+    }
+}
+async function afterCreationOptions(graph: Graph): Promise<void> {
+    console.log("Que souhaitez-vous faire ensuite ?");
+    console.log("1. Afficher les options du graphe");
+    console.log("2. Écraser le graphe et recommencer");
+    console.log("3. Retourner au menu principal");
+
+    const choice = await prompt("Entrez votre choix (1, 2, ou 3):");
+    switch (choice) {
+        case '1':
+            await graphOptions(graph);
+            break;
+        case '2':
+            await createGraphMenu();
+            break;
+        case '3':
+            await mainMenu();
+            break;
+        default:
+            console.log("Choix non valide, veuillez réessayer.");
+            await afterCreationOptions(graph);
+            break;
+    }
+}
+
 async function createAdjacencyListGraph(graph: Graph): Promise<void> {
     let more = true;
     console.log("\x1b[33mDébut de la création du graphe par liste d'adjacence.\x1b[0m");
@@ -197,21 +245,6 @@ async function createAdjacencyListGraph(graph: Graph): Promise<void> {
     await proposeToSaveGraph(graph);
 }
 
-async function promptForInteger(message: string, allowNegative = false): Promise<number> {
-    let input, value;
-    do {
-        input = await prompt(`${message}`);
-        value = parseInt(input);
-        if (isNaN(value) || (!allowNegative && value < 0)) {
-            console.log("\x1b[31mVeuillez entrer un entier valide.\x1b[0m");
-        }
-    } while (isNaN(value) || (!allowNegative && value < 0));
-    return value;
-    }
-if (import.meta.main) {
-    await mainMenu();
-}
-
 async function createAdjacencyMatrixGraph(graph: Graph): Promise<void> {
     const size = await promptForInteger("Entrez le nombre de sommets du graphe:");
     for (let i = 0; i < size; i++) {
@@ -224,6 +257,16 @@ async function createAdjacencyMatrixGraph(graph: Graph): Promise<void> {
             }
         });
     }
+}
+async function promptForInteger(message: string, allowNegative = false): Promise<number> {
+    let input = await prompt(message);
+    let value = parseInt(input);
+    while (isNaN(value) || (!allowNegative && value < 0)) {
+        console.log(`Entrée invalide. ${allowNegative ? '' : 'Veuillez entrer un entier non négatif.'}`);
+        input = await prompt(message);
+        value = parseInt(input);
+    }
+    return value;
 }
 
 function displayResults(

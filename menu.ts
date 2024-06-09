@@ -1,6 +1,9 @@
 import { Graph } from "./class_graph";
 import {displayResults} from "./algo";
 import {dijkstra, calculateIsochrone} from "./dijkstra";
+import {loadGraphFromFile, saveGraphToFile} from "./fileManagement";
+import {addArcOption, removeArcOption, testArcExistence, getSuccessors, getPredecessors, getNeighbors, getArcWeight} from "./algo";
+import { createAdjacencyListGraph, createAdjacencyMatrixGraph } from "./creategraph";
 
 async function graphOptions(graph: Graph): Promise<void> {
     const running = true;
@@ -246,4 +249,4 @@ async function proposeToSaveGraph(graph: Graph): Promise<void> {
         }
     }
 }
-export { proposeToSaveGraph };
+export { proposeToSaveGraph, createGraphMenu, graphOptions };
