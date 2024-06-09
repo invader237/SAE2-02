@@ -109,12 +109,14 @@ async function graphOptions(graph: Graph): Promise<void> {
 }
 
 
+// Fonction pour demander à l'utilisateur d'entrer des données
 async function prompt(message: string): Promise<string> {
     console.log(message);
     const buf = new Uint8Array(1024);
     const n = await Deno.stdin.read(buf) as number;
     return new TextDecoder().decode(buf.subarray(0, n)).trim();
 }
+
 
 // Fonction pour introduire un délai
 const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
