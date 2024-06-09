@@ -1,9 +1,10 @@
 import { Graph } from "./class_graph:coffin:"
 import { proposeToSaveGraph } from "./menu";
 
+// Interface définissant les résultats d'un algorithme de graphes, notamment Dijkstra
 interface GraphResults {
-    distances: Map<number, number>;
-    predecessors: Map<number, number | null>;
+    distances: Map<number, number>;  // Carte des distances minimales depuis le sommet de départ
+    predecessors: Map<number, number | null>;  // Carte des prédécesseurs sur le chemin le plus court
 }
 
 async function getSuccessors(graph: Graph): Promise<void> {
