@@ -33,4 +33,4 @@ async function loadGraphFromFile(filePath: string): Promise<Graph> {
     return graph;
 }
 
-export { loadGraphFromFile, saveGraphToFile };
+export { loadGraphFromFile};
