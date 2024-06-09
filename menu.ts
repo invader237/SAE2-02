@@ -1,5 +1,6 @@
 import { Graph } from "./class_graph";
-import { dijkstra, displayResults, calculateIsochrone } from "./algo";
+import {displayResults} from "./algo";
+import {dijkstra, calculateIsochrone} from "./dijkstra";
 
 async function graphOptions(graph: Graph): Promise<void> {
     const running = true;
