@@ -1,7 +1,7 @@
 import { Graph } from "./class_graph";
 import {displayResults} from "./algo";
 import {dijkstra, calculateIsochrone} from "./dijkstra";
-import {loadGraphFromFile, saveGraphToFile} from "./fileManagement";
+import {loadGraphFromFile} from "./fileManagement";
 import {addArcOption, removeArcOption, testArcExistence, getSuccessors, getPredecessors, getNeighbors, getArcWeight} from "./algo";
 import { createAdjacencyListGraph, createAdjacencyMatrixGraph } from "./creategraph";
 
@@ -257,7 +257,7 @@ async function createGraphMenu(): Promise<void> {
     const save = await prompt("Voulez-vous sauvegarder le graphe? (oui/non)");
     if (save.toLowerCase() === 'oui') {
         const filePath = await prompt("Veuillez entrer le chemin complet pour enregistrer le fichier:");
-        await saveGraphToFile(graph, filePath);
+        await graph.saveGraphToFile(graph, filePath);
     } else {
         await afterCreationOptions(graph);
     }
@@ -275,4 +275,4 @@ async function proposeToSaveGraph(graph: Graph): Promise<void> {
         }
     }
 }
-export { proposeToSaveGraph, createGraphMenu, graphOptions };
+export { proposeToSaveGraph, createGraphMenu, graphOptions, mainMenu, promptForInteger, prompt};
