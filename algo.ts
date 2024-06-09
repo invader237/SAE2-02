@@ -245,6 +245,21 @@ async function createAdjacencyListGraph(graph: Graph): Promise<void> {
     await proposeToSaveGraph(graph);
 }
 
+async function promptForInteger(message: string, allowNegative = false): Promise<number> {
+    let input, value;
+    do {
+        input = await prompt(`${message}`);
+        value = parseInt(input);
+        if (isNaN(value) || (!allowNegative && value < 0)) {
+            console.log("\x1b[31mVeuillez entrer un entier valide.\x1b[0m");
+        }
+    } while (isNaN(value) || (!allowNegative && value < 0));
+    return value;
+    }
+if (import.meta.main) {
+    await mainMenu();
+}
+
 async function createAdjacencyMatrixGraph(graph: Graph): Promise<void> {
     const size = await promptForInteger("Entrez le nombre de sommets du graphe:");
     for (let i = 0; i < size; i++) {
