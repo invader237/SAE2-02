@@ -1,102 +1,10 @@
-import { Graph } from "./class_graph.ts"
+import { Graph } from "./class_graph"
+
 interface GraphResults {
     distances: Map<number, number>;
     predecessors: Map<number, number | null>;
 }
 
-async function loadGraphMenu(): Promise<void> {
-    while (true) {
-        console.log("Veuillez entrer le chemin complet du fichier du graphe:");
-        const filePath = await prompt("Chemin du fichier :");
-        try {
-            const graph = await loadGraphFromFile(filePath);
-            console.log("Graphe chargé avec succès.");
-            await graphOptions(graph);
-            break;
-        } catch (error) {
-            console.error("Erreur lors du chargement du graphe. Vérifiez le chemin du fichier et réessayez.", error);
-            console.log("1. Réessayer");
-            console.log("2. Retourner au menu principal");
-            const choice = await prompt("Choisissez une option:");
-            if (choice === '2') {
-                await mainMenu();
-                return;
-            }
-        }
-    }
-}
-
-async function graphOptions(graph: Graph): Promise<void> {
-    const running = true;
-    while (running) {
-        console.log("\nQue souhaitez-vous faire ?");
-        console.log("1. Récupérer le nombre de sommets");
-        console.log("2. Récupérer le nombre d'arcs");
-        console.log("3. Exécuter l'algorithme de Dijkstra");
-        console.log("4. Retirer un arc");
-        console.log("5. Ajouter un arc"); 
-        console.log("6. Tester l'existence d'un arc");
-        console.log("7. Récupérer les successeurs d’un sommet");
-        console.log("8. Récupérer les prédécesseurs d’un sommet");
-        console.log("9. Récupérer les voisins d’un sommet");
-        console.log("10. Redimensionner le nombre de sommets");
-        console.log("11. Récupérer le poids d’un arc");
-        console.log("12. Retour au menu principal");
-        console.log("13. Quitter");
-
-        const action = await prompt("Choisissez une option:");
-        switch (action) {
-            case '1': {
-                console.log(`Le graphe contient ${graph.getVertexCount()} sommets.`);
-                break;
-            }
-            case '2': {
-                console.log(`Le graphe contient ${graph.getEdgeCount()} arcs.`);
-                break;
-            }
-            case '3': {
-                const startVertex = parseInt(await prompt("Entrez le numéro du sommet initial pour Dijkstra:"));
-                if (isNaN(startVertex) || !graph.getAdjacencyList().has(startVertex)) {
-                    console.error("Sommet initial invalide ou inexistant.");
-                    continue;
-                }
-                const results = dijkstra(graph, startVertex);
-                displayResults(results.distances, results.predecessors, startVertex);
-                break;
-            }
-            case '4':
-                await removeArcOption(graph);
-                break;
-            case '5':
-                await addArcOption(graph);
-                break;
-            case '6':
-                await testArcExistence(graph);
-                break;
-            case '7':
-                await getSuccessors(graph);
-                break;
-            case '8':
-                await getPredecessors(graph);
-                break;
-            case '9':
-                await getNeighbors(graph);
-                break;
-            case '11': 
-                await getArcWeight(graph);
-                break;
-            case '12':
-                await mainMenu();
-                return;
-            case '13':
-                console.log("Merci d'avoir utilisé l'application.");
-                return;
-            default:
-                console.log("Choix non valide, veuillez choisir une option valide.");
-                break;
-        }
-    }
-}
 async function getSuccessors(graph: Graph): Promise<void> {
     const vertex = parseInt(await prompt("Entrez le numéro du sommet pour obtenir ses successeurs :"));
     if (isNaN(vertex)) {
@@ -373,96 +281,6 @@ async function saveGraphToFile(graph: Graph, filePath: string): Promise<void> {
     }
 }
 
-
-
-await mainMenu();
-
-async function loadGraphFromFile(filePath: string): Promise<Graph> {
-    const graph = new Graph();
-    const fileContent = await Deno.readTextFile(filePath);
-    const lines = fileContent.trim().split('\n');
-    let header = true;  // Ajout d'un indicateur pour la première ligne
-
-    lines.forEach((line, _index) => {
-        if (header) {  // Ignore la première ligne (header)
-            header = false;
-            return;
-        }
-        const parts = line.split(' ').map(Number);
-        if (parts.length === 3) {
-            const [source, destination, weight] = parts;
-            // Assurez-vous que les sommets existent avant d'ajouter des arêtes
-            if (!graph.getAdjacencyList().has(source)) {
-                graph.addVertex(source);
-            }
-            if (!graph.getAdjacencyList().has(destination)) {
-                graph.addVertex(destination);
-            }
-            try {
-                graph.addEdge(source, destination, weight);
-            } catch (error) {
-                console.error(`Erreur lors de l'ajout de l'arc ${source} -> ${destination} avec poids ${weight}: ${error}`);
-            }
-        } else {
-            console.error(`Ligne mal formatée ou poids négatif trouvé: '${line}'`);
-        }
-    });
-    return graph;
-}
-
-export function dijkstra(graph: Graph, startVertex: number): GraphResults {
-    const distances = new Map<number, number>();
-    const predecessors = new Map<number, number | null>();
-    const priorityQueue = new Set<number>();
-
-    // Initialiser toutes les distances à l'infini, sauf pour le sommet de départ
-    graph.getAdjacencyList().forEach((_, vertex) => {
-        distances.set(vertex, Infinity);
-        predecessors.set(vertex, null);
-        priorityQueue.add(vertex);
-    });
-    distances.set(startVertex, 0);
-
-    while (priorityQueue.size > 0) {
-        const currentVertex = getVertexWithMinDistance(distances, priorityQueue);
-
-        // Si le sommet avec la distance minimale a une distance infinie, tous les sommets restants sont inatteignables.
-        if (currentVertex === -1 || distances.get(currentVertex) === Infinity) {
-            break;  // Aucun chemin restant possible
-        }
-
-        priorityQueue.delete(currentVertex);
-        const currentDistance = distances.get(currentVertex) ?? Infinity;
-
-        // Mettre à jour les distances pour chaque voisin
-        graph.getNeighbors(currentVertex).forEach((weight, neighbor) => {
-            if (priorityQueue.has(neighbor)) {  // Considérer uniquement les sommets encore dans la queue
-                const alt = currentDistance + weight;
-                if (alt < (distances.get(neighbor) ?? Infinity)) {
-                    distances.set(neighbor, alt);
-                    predecessors.set(neighbor, currentVertex);
-                    // Ceci n'est pas nécessaire pour une simple queue, mais serait nécessaire pour une priority queue implémentée correctement
-                }
-            }
-        });
-    }
-
-    return { distances, predecessors };
-}
-function getVertexWithMinDistance(distances: Map<number, number>, priorityQueue: Set<number>): number {
-    let minDistance = Infinity;
-    let vertexWithMinDistance = -1;
-
-    priorityQueue.forEach(vertex => {
-        const distance = distances.get(vertex) ?? Infinity;
-        if (distance < minDistance) {
-            minDistance = distance;
-            vertexWithMinDistance = vertex;
-        }
-    });
-
-    return vertexWithMinDistance;
-}
 function displayResults(
     distances: Map<number, number>,
     predecessors: Map<number, number | null>,
@@ -487,3 +305,4 @@ function displayResults(
     console.table(results, ["Sommet", "Distance", "Prédecesseur"]);  // Spécifiez les colonnes à afficher pour éviter '(idx)'
 }
 
+export { displayResults, getSuccessors, getNeighbors, getPredecessors, testArcExistence, getArcWeight, addArcOption, removeArcOption, createGraphMenu};
