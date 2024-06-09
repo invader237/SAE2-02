@@ -152,6 +152,7 @@ async function mainMenu(): Promise<void> {
         await mainMenu();
     }
 }
+
 // Menu pour charger un graphe depuis un fichier
 async function loadGraphMenu(): Promise<void> {
     console.clear();
