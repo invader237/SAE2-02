@@ -34,7 +34,7 @@ iwr https://deno.land/install.ps1 -useb | iex
 Pour démarrer l'interface de gestion de graphes, exécutez le script principal en utilisant Deno :
 
 ```bash
-deno run --allow-read --allow-write main.ts
+deno run --allow-read --allow-write --unstable-sloppy-imports main.ts
 ```
 
 Assurez-vous de donner les permissions nécessaires pour lire et écrire des fichiers si votre utilisation inclut la sauvegarde ou le chargement de graphes depuis des fichiers.
