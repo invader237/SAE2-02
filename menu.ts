@@ -152,6 +152,34 @@ async function mainMenu(): Promise<void> {
         await mainMenu();
     }
 }
+// Menu pour charger un graphe depuis un fichier
+async function loadGraphMenu(): Promise<void> {
+    console.clear();
+    console.log("\x1b[46m\x1b[1m\x1b[37m" + "═".repeat(60) + "\x1b[0m");
+    console.log("\x1b[46m\x1b[1m\x1b[37m             Chargement de Graphes             \x1b[0m");
+    console.log("\x1b[46m\x1b[1m\x1b[37m" + "═".repeat(60) + "\x1b[0m");
+    await sleep(200);
+    console.log("\x1b[36mVeuillez entrer le chemin complet du fichier du graphe :\x1b[0m");
+    const filePath = await prompt("\x1b[36m➤ Chemin du fichier :\x1b[0m");
+    try {
+        const graph = await loadGraphFromFile(filePath);
+        console.log("\x1b[32mGraphe chargé avec succès.\x1b[0m");
+        await sleep(400);
+        await graphOptions(graph);
+    } catch (error) {
+        console.error("\x1b[31mErreur lors du chargement :\x1b[0m", error);
+        console.log("\x1b[33m1. Réessayer\x1b[0m");
+        console.log("\x1b[33m2. Retourner au menu principal\x1b[0m");
+        const choice = await prompt("\x1b[36m➤ Choisissez une option :\x1b[0m");
+        if (choice === '2') {
+            if (import.meta.main) {
+                await mainMenu();
+            }
+        } else {
+            await loadGraphMenu();
+        }
+    }
+}
 
 async function proposeToSaveGraph(graph: Graph): Promise<void> {
     const save = (await prompt("Voulez-vous sauvegarder le graphe? (oui/non)")).toLowerCase();
