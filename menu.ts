@@ -182,6 +182,58 @@ async function loadGraphMenu(): Promise<void> {
     }
 }
 
+async function afterCreationOptions(graph: Graph): Promise<void> {
+    console.log("Que souhaitez-vous faire ensuite ?");
+    console.log("1. Afficher les options du graphe");
+    console.log("2. Écraser le graphe et recommencer");
+    console.log("3. Retourner au menu principal");
+
+    const choice = await prompt("Entrez votre choix (1, 2, ou 3):");
+    switch (choice) {
+        case '1':
+            await graphOptions(graph);
+            break;
+        case '2':
+            await createGraphMenu();
+            break;
+        case '3':
+            await mainMenu();
+            break;
+        default:
+            console.log("Choix non valide, veuillez réessayer.");
+            await afterCreationOptions(graph);
+            break;
+    }
+}
+
+async function createGraphMenu(): Promise<void> {
+    console.log("Choisissez le type de graphe à créer:");
+    console.log("1. Liste d'adjacence");
+    console.log("2. Matrice d'adjacence");
+    let typeChoice = await prompt("Entrez votre choix (1 ou 2):");
+
+    while (!['1', '2'].includes(typeChoice)) {
+        console.log("Entrée invalide. Veuillez choisir 1 pour une liste d'adjacence ou 2 pour une matrice d'adjacence.");
+        typeChoice = await prompt("Entrez votre choix (1 ou 2):");
+    }
+
+    const graph = new Graph();
+    if (typeChoice === '1') {
+        await createAdjacencyListGraph(graph);
+    } else {
+        await createAdjacencyMatrixGraph(graph);
+    }
+
+    // Demandez à l'utilisateur s'il souhaite sauvegarder le graphe
+    const save = await prompt("Voulez-vous sauvegarder le graphe? (oui/non)");
+    if (save.toLowerCase() === 'oui') {
+        const filePath = await prompt("Veuillez entrer le chemin complet pour enregistrer le fichier:");
+        await saveGraphToFile(graph, filePath);
+    } else {
+        await afterCreationOptions(graph);
+    }
+}
+
 async function proposeToSaveGraph(graph: Graph): Promise<void> {
     const save = (await prompt("Voulez-vous sauvegarder le graphe? (oui/non)")).toLowerCase();
     if (save === 'oui') {
