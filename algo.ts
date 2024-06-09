@@ -1,5 +1,4 @@
 import { Graph } from "./class_graph"
-import { proposeToSaveGraph, graphOptions, mainMenu} from "./menu";
 
 interface GraphResults {
     distances: Map<number, number>;
@@ -187,4 +186,4 @@ function displayResults(
     console.table(results, ["Sommet", "Distance", "Prédecesseur"]);  // Spécifiez les colonnes à afficher pour éviter '(idx)'
 }
 
-export { displayResults, getSuccessors, getNeighbors, getPredecessors, testArcExistence, getArcWeight, addArcOption, removeArcOption, createGraphMenu};
+export { displayResults, getSuccessors, getNeighbors, getPredecessors, testArcExistence, getArcWeight, addArcOption, removeArcOption};
