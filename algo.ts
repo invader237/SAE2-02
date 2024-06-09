@@ -166,66 +166,6 @@ async function removeArcOption(graph: Graph): Promise<void> {
     }
 }
 
-async function createAdjacencyListGraph(graph: Graph): Promise<void> {
-    let more = true;
-    console.log("\x1b[33mDébut de la création du graphe par liste d'adjacence.\x1b[0m");
-
-    while (continueAdding) {
-        try {
-            const source = await promptForInteger("Entrez le sommet source (doit être un entier positif):", false);
-            const destination = await promptForInteger("Entrez le sommet destination (doit être un entier positif):", false);
-            const weight = await promptForInteger("Entrez le poids de l'arête (doit être un entier positif):", false);
-            // Vérification que les sommets source et destination ne sont pas identiques
-            if (source === destination) {
-                throw new Error("Une boucle (arc de sommet à lui-même) n'est pas autorisée.");
-            }
-
-            // Ajout des sommets et de l'arc dans le graphe
-            graph.addVertex(source);
-            graph.addVertex(destination);
-            graph.addEdge(source, destination, weight);
-            console.log(`\x1b[32mArc ajouté de ${source} à ${destination} avec un poids de ${weight}.\x1b[0m`);
-        } catch (error) {
-            console.error(`\x1b[31mErreur: ${error.message}\x1b[0m`);
-        }
-
-        // Demande à l'utilisateur s'il souhaite continuer à ajouter d'autres arêtes
-        const response = await prompt("Voulez-vous ajouter une autre arête ? (oui/non)");
-        continueAdding = response.toLowerCase() === 'oui';
-    }
-
-    await proposeToSaveGraph(graph);
-}
-
-async function promptForInteger(message: string, allowNegative = false): Promise<number> {
-    let input, value;
-    do {
-        input = await prompt(`${message}`);
-        value = parseInt(input);
-        if (isNaN(value) || (!allowNegative && value < 0)) {
-            console.log("\x1b[31mVeuillez entrer un entier valide.\x1b[0m");
-        }
-    } while (isNaN(value) || (!allowNegative && value < 0));
-    return value;
-    }
-if (import.meta.main) {
-    await mainMenu();
-}
-
-async function createAdjacencyMatrixGraph(graph: Graph): Promise<void> {
-    const size = await promptForInteger("Entrez le nombre de sommets du graphe:");
-    for (let i = 0; i < size; i++) {
-        graph.addVertex(i);  // Assurez-vous que tous les sommets sont initialisés
-        const weights = await prompt(`Entrez les poids des arêtes pour le sommet ${i}, séparés par des espaces:`);
-        const weightList = weights.split(' ').map(w => parseInt(w));
-        weightList.forEach((weight, index) => {
-            if (weight > 0) {  // Ajoutez une arête uniquement si le poids est supérieur à 0
-                graph.addEdge(i, index, weight);
-            }
-        });
-    }
-}
-
 function displayResults(
     distances: Map<number, number>,
     predecessors: Map<number, number | null>,
