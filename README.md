@@ -38,19 +38,21 @@ deno run --allow-read --allow-write main.ts
 ```
 
 Assurez-vous de donner les permissions nécessaires pour lire et écrire des fichiers si votre utilisation inclut la sauvegarde ou le chargement de graphes depuis des fichiers.
+Voici la section ajoutée pour "Deno Tests" dans votre fichier `README.md`, complet avec une introduction à la façon de lancer les tests et pourquoi ils sont importants :
 
-## Contribution
 
-Les contributions sont toujours les bienvenues ! Si vous souhaitez contribuer au projet, vous pouvez suivre ces étapes :
+## Deno Tests
 
-1. Fork le projet
-2. Créez votre branche de fonctionnalités (`git checkout -b feature/AmazingFeature`)
-3. Committez vos changements (`git commit -m 'Add some AmazingFeature'`)
-4. Push à la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrez une Pull Request
+Les tests sont essentiels pour assurer la fiabilité et la robustesse du code. Pour exécuter les tests de ce projet, vous pouvez utiliser la commande suivante :
+
+```bash
+deno test --allow-read
+```
+
+Cette commande lancera tous les tests définis dans les fichiers de test du projet, en vérifiant chaque fonctionnalité pour des bugs et des erreurs potentielles. Cela inclut les tests pour l'ajout et la suppression de sommets et d'arêtes, ainsi que les tests de l'algorithme de Dijkstra.
 
 ## Contact
 
 
 Lien du projet: [https://github.com/invader237/SAE2-02](https://github.com/invader237/SAE2-02)
-```
+
