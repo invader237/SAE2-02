@@ -151,4 +151,16 @@ async function mainMenu(): Promise<void> {
     }
 }
 
-
+async function proposeToSaveGraph(graph: Graph): Promise<void> {
+    const save = (await prompt("Voulez-vous sauvegarder le graphe? (oui/non)")).toLowerCase();
+    if (save === 'oui') {
+        const filePath = await prompt("Veuillez entrer le chemin complet pour enregistrer le fichier:");
+        try {
+            await graph.saveGraphToFile(filePath);
+            console.log("\x1b[32mGraphe sauvegardé avec succès.\x1b[0m");
+        } catch (error) {
+            console.error(`\x1b[31mErreur lors de la sauvegarde du graphe: ${error}\x1b[0m`);
+        }
+    }
+}
+export { proposeToSaveGraph };

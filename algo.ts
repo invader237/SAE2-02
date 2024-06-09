@@ -1,4 +1,5 @@
-import { Graph } from "./class_graph"
+import { Graph } from "./class_graph:coffin:"
+import { proposeToSaveGraph } from "./menu";
 
 interface GraphResults {
     distances: Map<number, number>;
@@ -215,23 +216,33 @@ async function afterCreationOptions(graph: Graph): Promise<void> {
 
 async function createAdjacencyListGraph(graph: Graph): Promise<void> {
     let more = true;
-    console.log("Création du graphe par liste d'adjacence.");
-    while (more) {
-        const source = await promptForInteger("Entrez le sommet source (doit être un entier positif):", false);
-        const destination = await promptForInteger("Entrez le sommet destination (doit être un entier positif):", false);
-        const weight = await promptForInteger("Entrez le poids de l'arête (doit être un entier positif):", false);
+    console.log("\x1b[33mDébut de la création du graphe par liste d'adjacence.\x1b[0m");
 
-        // Vérifie si l'arc existe déjà
-        if (graph.getNeighbors(source)?.has(destination)) {
-            console.log(`Un arc entre ${source} et ${destination} existe déjà avec un poids de ${graph.getNeighbors(source).get(destination)}.`);
-        } else {
+    while (continueAdding) {
+        try {
+            const source = await promptForInteger("Entrez le sommet source (doit être un entier positif):", false);
+            const destination = await promptForInteger("Entrez le sommet destination (doit être un entier positif):", false);
+            const weight = await promptForInteger("Entrez le poids de l'arête (doit être un entier positif):", false);
+            // Vérification que les sommets source et destination ne sont pas identiques
+            if (source === destination) {
+                throw new Error("Une boucle (arc de sommet à lui-même) n'est pas autorisée.");
+            }
+
+            // Ajout des sommets et de l'arc dans le graphe
+            graph.addVertex(source);
+            graph.addVertex(destination);
             graph.addEdge(source, destination, weight);
-            console.log(`Arc ajouté de ${source} à ${destination} avec un poids de ${weight}.`);
+            console.log(`\x1b[32mArc ajouté de ${source} à ${destination} avec un poids de ${weight}.\x1b[0m`);
+        } catch (error) {
+            console.error(`\x1b[31mErreur: ${error.message}\x1b[0m`);
         }
 
-        const another = await prompt("Voulez-vous ajouter une autre arête ? (oui/non)");
-        more = another.toLowerCase() === 'oui';
+        // Demande à l'utilisateur s'il souhaite continuer à ajouter d'autres arêtes
+        const response = await prompt("Voulez-vous ajouter une autre arête ? (oui/non)");
+        continueAdding = response.toLowerCase() === 'oui';
     }
+
+    await proposeToSaveGraph(graph);
 }
 
 async function createAdjacencyMatrixGraph(graph: Graph): Promise<void> {
