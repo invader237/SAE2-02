@@ -92,7 +92,9 @@ async function graphOptions(graph: Graph): Promise<void> {
                 break;
             }
             case '13': {
-                await mainMenu();
+                if (import.meta.main) {
+                    await mainMenu();
+                }
                 return;
             }
             case '14': {
@@ -121,6 +123,7 @@ async function prompt(message: string): Promise<string> {
 // Fonction pour introduire un délai
 const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 // Affiche le menu principal et gère la navigation
+// Affiche le menu principal et gère la navigation
 async function mainMenu(): Promise<void> {
     try {
         console.clear();
@@ -143,13 +146,17 @@ async function mainMenu(): Promise<void> {
             default:
                 console.log("\x1b[31mChoix non valide, veuillez entrer 1 ou 2.\x1b[0m");
                 await sleep(500);
-                await mainMenu();
+                if (import.meta.main) {
+                    await mainMenu();
+                }
                 break;
         }
     } catch (error) {
         console.error("\x1b[31mUne erreur est survenue:\x1b[0m", error);
         await sleep(500);
-        await mainMenu();
+        if (import.meta.main) {
+            await mainMenu();
+        }
     }
 }
 
@@ -183,12 +190,16 @@ async function loadGraphMenu(): Promise<void> {
 }
 
 async function afterCreationOptions(graph: Graph): Promise<void> {
-    console.log("Que souhaitez-vous faire ensuite ?");
-    console.log("1. Afficher les options du graphe");
-    console.log("2. Écraser le graphe et recommencer");
-    console.log("3. Retourner au menu principal");
+    console.clear();
+    console.log("\x1b[1m\x1b[35m═══════════════════════════════════════════════════\x1b[0m");
+    console.log("\x1b[1m\x1b[35m          Options de Gestion de votre Graphe         \x1b[0m");
+    console.log("\x1b[1m\x1b[35m═══════════════════════════════════════════════════\x1b[0m");
+    console.log("\x1b[36m1. Afficher les options du graphe\x1b[0m");
+    console.log("\x1b[36m2. Écraser le graphe et recommencer\x1b[0m");
+    console.log("\x1b[36m3. Retourner au menu principal\x1b[0m");
+    console.log("\x1b[35m═══════════════════════════════════════════════════\x1b[0m");
 
-    const choice = await prompt("Entrez votre choix (1, 2, ou 3):");
+    const choice = await prompt("\x1b[33m➤ Entrez votre choix (1, 2, ou 3):\x1b[0m");
     switch (choice) {
         case '1':
             await graphOptions(graph);
@@ -197,10 +208,12 @@ async function afterCreationOptions(graph: Graph): Promise<void> {
             await createGraphMenu();
             break;
         case '3':
-            await mainMenu();
+            if (import.meta.main) {
+                await mainMenu();
+            }
             break;
         default:
-            console.log("Choix non valide, veuillez réessayer.");
+            console.log("\x1b[31mChoix non valide, veuillez réessayer.\x1b[0m");
             await afterCreationOptions(graph);
             break;
     }
